@@ -6,17 +6,17 @@ local dpi = require('beautiful').xresources.apply_dpi
 -- TODO needs to be able to read different styles from widget folder
 local popupLib = function(height, width, widget)
     local widgetContainer = wibox.widget {
-	{widget, margins = dpi(10), widget = wibox.container.margin},
-	forced_height = height,
-	forced_width = width,
-	layout = wibox.layout.fixed.vertical
+        {widget, margins = dpi(10), widget = wibox.container.margin},
+        forced_height = height,
+        forced_width = width,
+        layout = wibox.layout.fixed.vertical
     }
 
     local popupWidget = awful.popup {
-	widget = widgetContainer,
-	shape = gears.shape.rectangle,
-	visible = false,
-	ontop = true,
+        widget = widgetContainer,
+        shape = gears.shape.rectangle,
+        visible = false,
+        ontop = true,
 	placement = awful.placement.centered
     }
     return popupWidget
@@ -24,7 +24,7 @@ end
 
 local promptPop = {}
 
-local list_matches = wibox.widget.optionsbox("")
+local options = wibox.widget.optionsbox("")
 
 local options =
 [[
@@ -41,23 +41,35 @@ local myprompt = awful.widget.prompt({
 	changed_callback = function(input)
 	    local grep_cmd = [[echo -e "]] .. options .. [[" | grep --color=auto "]] .. input .. [["]]
 	    awful.spawn.easy_async_with_shell(grep_cmd, function(output)
-						  list_matches.options = output
+						  -- naughty.notify({title=output})
+						  options.options = output
 	    end)
 	end,
 	done_callback = function()
 	    promptPop.visible = false
+	end,
+	exe_callback = function(result)
+	    -- open in save_cmd
+	    local save_cmd = [[echo "]] .. result .. [[" > $HOME/.cache/awesome/bling_dmenu_out]]
+	    awful.spawn.with_shell(save_cmd)
 	end
+	
 })
 
 
-promptPop = popupLib(dpi(400), dpi(250), {myprompt, list_matches, layout = wibox.layout.fixed.vertical})
+promptPop = popupLib(dpi(400), dpi(250), {myprompt, options, layout = wibox.layout.fixed.vertical})
 
 -- will be called from the run script
-awesome.connect_signal("toggle::prompt", function()
+awesome.connect_signal("bling::dmenu", function()
 			   if promptPop.visible then
 			       promptPop.visible = false
 			   else
 			       promptPop.visible = true
+
+			       awful.spawn.easy_async_with_shell("cat $HOME/.cache/awesome/bling_dmenu_in", function(out)
+					options = out
+			       end)
 			       myprompt:run()
 			   end
+
 end)
