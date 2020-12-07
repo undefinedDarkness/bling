@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# has to accept some XDG thing and not be hardcoded
+touch $HOME/.cache/awesome/bling_dmenu_in
+
+
+cat > $HOME/.cache/awesome/bling_dmenu_in
+
+awesome-client "awesome.emit_signal(\"bling::dmenu\")"
+
+# wait until ptrompt is done
+while [ ! -f $HOME/.cache/awesome/bling_dmenu_out ]; do sleep 0.1; done
+
+cat $HOME/.cache/awesome/bling_dmenu_out
+rm $HOME/.cache/awesome/bling_dmenu_out
