@@ -42,7 +42,7 @@ local myprompt = awful.widget.prompt({
 	    local grep_cmd = [[echo -e "]] .. options .. [[" | grep --color=auto "]] .. input .. [["]]
 	    awful.spawn.easy_async_with_shell(grep_cmd, function(output)
 						  -- naughty.notify({title=output})
-						  options.options = output
+						  options.text = output
 	    end)
 	end,
 	done_callback = function()
