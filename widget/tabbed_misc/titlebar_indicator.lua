@@ -7,6 +7,8 @@ local tabbed_module = require(
     tostring(...):match(".*bling") .. ".module.tabbed"
 )
 
+-- TODO: This connects a lot of signals and makes a mess
+
 -- Just check if a table contains a value.
 local function tbl_contains(tbl, item)
 	for _, v in ipairs(tbl) do

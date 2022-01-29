@@ -54,7 +54,7 @@ tabbed.remove = function(c)
     end
     local tabobj = c.bling_tabbed
     table.remove(tabobj.clients, tabobj.focused_idx)
-    if not beautiful.tabbar_disable then
+    if beautiful.tabbar_disable then
         awful.titlebar.hide(c, bar.position)
     end
     c.bling_tabbed = nil
@@ -229,6 +229,9 @@ tabbed.switch_to = function(tabobj, new_idx)
 end
 
 tabbed.update_tabbar = function(tabobj)
+  if beautiful.tabbar_disable then
+	return
+	end
     local flexlist = bar.layout()
     local tabobj_focused_client = tabobj.clients[tabobj.focused_idx]
     local tabobj_is_focused = (client.focus == tabobj_focused_client)
